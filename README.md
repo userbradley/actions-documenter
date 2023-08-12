@@ -1,105 +1,35 @@
-# GitHub Action: mkdocs Build
+# GitHub Actions Automatic Documenter
 
-Mkdocs site builder and deployer
+## What problem this solves
 
-## Quickstart
+An itch at the back of my brain
 
-```yaml
-on: [push]
-name: Build
+## How to use
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    name: Build and Deploy
-    steps:
-      - uses: userbradley/action-mkdocs@v1.0.0
-        with:
-          gcsBucket: 
-          serviceAccount: 
-          directory: site
+You will need to install the CLI locally (Coming soon)
+
+For the time being this can be done by running:
+
+```shell
+git clone git@github.com:userbradley/actions-documenter.git
+go install
 ```
 
-## Inputs
+Once installed run the below
 
-| Name | Description | Required | Default Value |
-|------|-------------|----------|---------------|
-| `gcsBucket` | Name of the GCS Bucket to deploy the site to | `true` | `Null` |
-| `serviceAccount` | Email address of the service account to use to Upload to the GCS Bucket | `true` | `Null` |
-| `sensitive` | Should the Workload Identity provider use the Sensitive Pool | `false` | `false` |
-| `GITHUB_TOKEN` | GitHub Token | `true` | `Null` |
-| `siteUrl` | URL of the site to link the PR comment to | `true` | `Null` |
-| `directory` | Location of the site to build | `true` | `Null` |
-| `mkdocsVersion` | Version of MKdocs to install | `false` | `9.1.21` |
-
-## Examples
-
-### Example 1
-
-```yaml
-on: [push]
-name: Build
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    name: Build and Deploy
-    steps:
-      - uses: userbradley/action-mkdocs@v1.0.0
-        with:
-          gcsBucket: 
-          serviceAccount: 
-          directory: site
+```shell
+touch readme.hcl
+mkdir examples
+touch examples/basic.md
+touch examples/quickstart.md
 ```
 
-### Example 2
+Ensure you run the command line tool from the same directory as the `actions.yml` file
 
-```yaml
-on: [push]
-name: Build
+## Generate the README
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    name: Build and Deploy
-    steps:
-      - uses: userbradley/action-mkdocs@v1.0.0
-        with:
-          gcsBucket: 
-          serviceAccount: 
-          directory: site
+```shell
+actions-documenter 
 ```
 
-### Example 3
-
-```yaml
-on: [push]
-name: Build
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    name: Build and Deploy
-    steps:
-      - uses: userbradley/action-mkdocs@v1.0.0
-        with:
-          gcsBucket: 
-          serviceAccount: 
-          directory: site
-```
-
-
----
-This is where you can write a footer for your documentation
+This will create the README file
