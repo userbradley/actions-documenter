@@ -1,61 +1,75 @@
-# GitHub Action: Example Action
+# Actions Documenter
 
-A simple example action to demonstrate the output from the CLI
+This is a simple CLI tool that allows you to automatically generate **highly opinionated** documentation with 
+minimal input from the human
 
-## Quickstart
+## Installing
 
-```yaml
-on: [push]
-name: Build
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    name: Build and Deploy
-    steps:
-      - uses: userbradley/example-action@v1.0.0
-        with:
-          gcsBucket:
-          serviceAccount:
-          directory: site
-```
-## Inputs
-
-| Name | Description | Required | Default Value |
-|------|-------------|----------|---------------|
-| `mkdocsVersion` | Version of MKdocs to install | `false` | `9.1.21` |
-| `gcsBucket` | Name of the GCS Bucket to deploy the site to | `true` | `Null` |
-| `serviceAccount` | Email address of the service account to use to Upload to the GCS Bucket | `true` | `Null` |
-| `sensitive` | Should the Workload Identity provider use the Sensitive Pool | `false` | `false` |
-| `GITHUB_TOKEN` | GitHub Token | `true` | `Null` |
-| `siteUrl` | URL of the site to link the PR comment to | `true` | `Null` |
-| `directory` | Location of the site to build | `true` | `Null` |
-
-## Examples
-
-### Example 1
-
-```yaml
-on: [push]
-name: Build
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    name: Build and Deploy
-    steps:
-      - uses: userbradley/example-action@v1.0.0
-        with:
-          gcsBucket: 
-          serviceAccount: 
-          directory: site
+```shell
+git clone git@github.com:userbradley/actions-documenter.git
+go install
 ```
 
----
-This code is internal and not for release
+## Setting up the Configuration
+
+Create a file called `readme.hcl`
+
+In the file put the below:
+
+```hcl
+version = "v1.0.0"
+
+title {
+  enabled = true
+  override = ""
+}
+
+quickstart {
+  path = "docs/quickstart.md"
+}
+
+examples {
+  example {
+    enabled = true
+    name    = "Example 1"
+    path    = "docs/example1.md"
+  }
+
+}
+
+footer {
+  footer_from = "footer.md"
+}
+```
+
+### How to use the version
+
+To make life easier and not having to update every reference for the verison, you can use `@${{version}}` in the action file
+
+```yaml
+    steps:
+      - uses: userbradley/example-action@${{version}}
+```
+
+When this gets rendered out, it will be replaced with what ever `version` is set to
+
+You should ensure that the `readme.hcl` file is in the same location as the `action.yml` file
+
+### How to add more examples
+
+To add more examples, just repeat the `example` block like below
+
+```hcl
+examples {
+  example {
+    enabled = true
+    name    = "Example 1"
+    path    = "docs/example1.md"
+  }
+  example {
+    enabled = true
+    name    = "Example 2"
+    path    = "docs/example2.md"
+  }
+}
+```
