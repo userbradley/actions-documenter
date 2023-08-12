@@ -73,3 +73,7 @@ examples {
   }
 }
 ```
+
+## Contact
+
+As per the license, if you want to use this internally please contact me on [legal@breadnet.co.uk](mailto:legal@breadnet.co.uk)
