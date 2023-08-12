@@ -1,0 +1,28 @@
+name: mkdocs Build
+description: Mkdocs site builder and deployer
+author: "userbradley"
+
+inputs:
+  mkdocsVersion:
+    description: Version of MKdocs to install
+    required: false
+    default: "9.1.21"
+  gcsBucket:
+    description: Name of the GCS Bucket to deploy the site to
+    required: true
+  serviceAccount:
+    description: Email address of the service account to use to Upload to the GCS Bucket
+    required: true
+  sensitive:
+    description: Should the Workload Identity provider use the Sensitive Pool
+    default: false
+    required: false
+  GITHUB_TOKEN:
+    description: GitHub Token
+    required: true
+  siteUrl:
+    description: URL of the site to link the PR comment to
+    required: true
+  directory:
+    description: Location of the site to build
+    required: true
