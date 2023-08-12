@@ -1,8 +1,4 @@
-action "layout" {
-  title {
-    enabled = true
-  }
-  description {
-    enabled  = true
-  }
+title {
+  enabled = true
+  override = "hello"
 }

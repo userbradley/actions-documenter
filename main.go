@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/go-yaml/yaml"
+	"github.com/hashicorp/hcl/v2/gohcl"
+	"github.com/hashicorp/hcl/v2/hclparse"
 )
 
 type Action struct {
@@ -22,6 +24,15 @@ type Input struct {
 	Default     string `yaml:"default"`
 }
 
+type TitleLayout struct {
+	Title TitleConfig `hcl:"title,block"`
+}
+
+type TitleConfig struct {
+	Enabled  bool   `hcl:"enabled"`
+	Override string `hcl:"override"`
+}
+
 func main() {
 	data, err := ioutil.ReadFile("action.yml")
 	if err != nil {
@@ -34,7 +45,17 @@ func main() {
 		log.Fatalf("Error unmarshaling YAML: %v", err)
 	}
 
-	readme := generateReadme(action)
+	hclData, err := ioutil.ReadFile("readme.hcl")
+	if err != nil {
+		log.Fatalf("Error reading HCL configuration: %v", err)
+	}
+
+	layout, err := parseTitleLayout(hclData)
+	if err != nil {
+		log.Fatalf("Error parsing layout configuration: %v", err)
+	}
+
+	readme := generateReadme(action, layout)
 
 	err = ioutil.WriteFile("README.md", []byte(readme), 0644)
 	if err != nil {
@@ -44,13 +65,33 @@ func main() {
 	fmt.Println("README.md generated successfully!")
 }
 
-func generateReadme(action Action) string {
+func parseTitleLayout(hclData []byte) (*TitleLayout, error) {
+	parser := hclparse.NewParser()
+	file, diags := parser.ParseHCL(hclData, "readme.hcl")
+	if diags.HasErrors() {
+		return nil, diags.Errs()[0]
+	}
+
+	var layout TitleLayout
+	diags = gohcl.DecodeBody(file.Body, nil, &layout)
+	if diags.HasErrors() {
+		return nil, diags.Errs()[0]
+	}
+
+	return &layout, nil
+}
+
+func generateReadme(action Action, layout *TitleLayout) string {
 	var builder strings.Builder
 
-	// Title
-	builder.WriteString(fmt.Sprintf("# GitHub Action: %s\n\n", action.Name))
+	if layout.Title.Enabled {
+		titleText := action.Name
+		if layout.Title.Override != "" {
+			titleText = layout.Title.Override
+		}
+		builder.WriteString(fmt.Sprintf("# GitHub Action: %s\n\n", titleText))
+	}
 
-	// Description
 	builder.WriteString(action.Description + "\n\n")
 
 	// Inputs section
