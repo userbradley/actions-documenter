@@ -115,6 +115,9 @@ func generateReadme(action Action, layout *LayoutConfig) string {
 		builder.WriteString(fmt.Sprintf("# GitHub Action: %s\n\n", titleText))
 	}
 
+	// Description section
+	builder.WriteString(action.Description + "\n\n")
+
 	// Quickstart section
 	if layout.Quickstart.Path != "" {
 		builder.WriteString("## Quickstart\n\n")
@@ -126,8 +129,6 @@ func generateReadme(action Action, layout *LayoutConfig) string {
 			builder.Write(quickstartContent)
 		}
 	}
-
-	builder.WriteString(action.Description + "\n\n")
 
 	// Inputs section
 	builder.WriteString("## Inputs\n\n")
@@ -171,6 +172,9 @@ func generateReadme(action Action, layout *LayoutConfig) string {
 			builder.Write(footerContent)
 		}
 	}
+
+	// Add a new line at the end of the README
+	builder.WriteString("\n")
 
 	return builder.String()
 }
