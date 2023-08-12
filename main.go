@@ -31,25 +31,28 @@ type Example struct {
 }
 
 type ExamplesConfig struct {
-	Example1 Example `hcl:"example1,block"`
-	Example2 Example `hcl:"example2,block"`
-	// Add more example blocks as needed
+	Examples []Example `hcl:"example,block"`
 }
 
 type FooterConfig struct {
 	From string `hcl:"footer_from"`
 }
 
-type LayoutConfig struct {
-	Title    TitleConfig    `hcl:"title,block"`
-	Examples ExamplesConfig `hcl:"examples,block"`
-	Version  string         `hcl:"version"`
-	Footer   FooterConfig   `hcl:"footer,block"`
+type QuickstartConfig struct {
+	Path string `hcl:"path"`
 }
 
 type TitleConfig struct {
 	Enabled  bool   `hcl:"enabled"`
 	Override string `hcl:"override"`
+}
+
+type LayoutConfig struct {
+	Version    string           `hcl:"version"`
+	Title      TitleConfig      `hcl:"title,block"`
+	Quickstart QuickstartConfig `hcl:"quickstart,block"`
+	Examples   ExamplesConfig   `hcl:"examples,block"`
+	Footer     FooterConfig     `hcl:"footer,block"`
 }
 
 func main() {
@@ -103,12 +106,25 @@ func parseLayoutConfig(hclData []byte) (*LayoutConfig, error) {
 func generateReadme(action Action, layout *LayoutConfig) string {
 	var builder strings.Builder
 
+	// Title section
 	if layout.Title.Enabled {
 		titleText := action.Name
 		if layout.Title.Override != "" {
 			titleText = layout.Title.Override
 		}
 		builder.WriteString(fmt.Sprintf("# GitHub Action: %s\n\n", titleText))
+	}
+
+	// Quickstart section
+	if layout.Quickstart.Path != "" {
+		builder.WriteString("## Quickstart\n\n")
+		quickstartContent, err := ioutil.ReadFile(layout.Quickstart.Path)
+		if err != nil {
+			log.Printf("Error reading quickstart file: %v\n", err)
+		} else {
+			quickstartContent = replaceVersionPlaceholder(quickstartContent, layout.Version)
+			builder.Write(quickstartContent)
+		}
 	}
 
 	builder.WriteString(action.Description + "\n\n")
@@ -131,30 +147,19 @@ func generateReadme(action Action, layout *LayoutConfig) string {
 	}
 
 	// Examples section
-	if layout.Examples.Example1.Enabled {
-		builder.WriteString("\n## Examples\n\n")
-		builder.WriteString(fmt.Sprintf("### %s\n\n", layout.Examples.Example1.Name))
-		exampleContent, err := ioutil.ReadFile(layout.Examples.Example1.Path)
-		if err != nil {
-			log.Printf("Error reading example file: %v\n", err)
-		} else {
-			exampleContent = replaceVersionPlaceholder(exampleContent, layout.Version)
-			builder.Write(exampleContent)
+	builder.WriteString("\n## Examples\n\n")
+	for _, example := range layout.Examples.Examples {
+		if example.Enabled {
+			builder.WriteString(fmt.Sprintf("### %s\n\n", example.Name))
+			exampleContent, err := ioutil.ReadFile(example.Path)
+			if err != nil {
+				log.Printf("Error reading example file: %v\n", err)
+			} else {
+				exampleContent = replaceVersionPlaceholder(exampleContent, layout.Version)
+				builder.Write(exampleContent)
+			}
 		}
 	}
-
-	if layout.Examples.Example2.Enabled {
-		builder.WriteString(fmt.Sprintf("\n### %s\n\n", layout.Examples.Example2.Name))
-		exampleContent, err := ioutil.ReadFile(layout.Examples.Example2.Path)
-		if err != nil {
-			log.Printf("Error reading example file: %v\n", err)
-		} else {
-			exampleContent = replaceVersionPlaceholder(exampleContent, layout.Version)
-			builder.Write(exampleContent)
-		}
-	}
-
-	// Add more examples as needed
 
 	// Footer section
 	if layout.Footer.From != "" {

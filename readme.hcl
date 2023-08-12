@@ -5,20 +5,25 @@ title {
   override = ""
 }
 
-#quickstart {
-#  path = "quickstart.md"
-#}
+quickstart {
+  path = "quickstart.md"
+}
 
 examples {
-  example1 {
+  example {
     enabled = true
-    name    = "Example"
-    path    = "example.md"
+    name    = "Example 1"
+    path    = "examples/example1.md"
   }
-  example2 {
+  example {
     enabled = true
-    name = "Example"
-    path = "example.md"
+    name    = "Example 2"
+    path    = "examples/example2.md"
+  }
+  example {
+    enabled = true
+    name    = "Example 3"
+    path    = "examples/example3.md"
   }
 }
 
