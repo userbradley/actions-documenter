@@ -3,10 +3,18 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"strings"
 
 	"github.com/go-yaml/yaml"
 )
+
+type Action struct {
+	Name        string           `yaml:"name"`
+	Description string           `yaml:"description"`
+	Author      string           `yaml:"author"`
+	Inputs      map[string]Input `yaml:"inputs"`
+}
 
 type Input struct {
 	Description string `yaml:"description"`
@@ -14,56 +22,53 @@ type Input struct {
 	Default     string `yaml:"default"`
 }
 
-type Action struct {
-	Name   string           `yaml:"name"`
-	Desc   string           `yaml:"description"`
-	Author string           `yaml:"author"`
-	Inputs map[string]Input `yaml:"inputs"`
-}
-
 func main() {
 	data, err := ioutil.ReadFile("action.yml")
 	if err != nil {
-		fmt.Println("Error reading file:", err)
-		return
+		log.Fatalf("Error reading file: %v", err)
 	}
 
 	var action Action
 	err = yaml.Unmarshal(data, &action)
 	if err != nil {
-		fmt.Println("Error parsing YAML:", err)
-		return
+		log.Fatalf("Error unmarshaling YAML: %v", err)
 	}
 
 	readme := generateReadme(action)
-	fmt.Println(readme)
+
+	err = ioutil.WriteFile("README.md", []byte(readme), 0644)
+	if err != nil {
+		log.Fatalf("Error writing README: %v", err)
+	}
+
+	fmt.Println("README.md generated successfully!")
 }
 
 func generateReadme(action Action) string {
-	readme := fmt.Sprintf("# GitHub action: %s\n\n%s\n\n", action.Name, action.Desc)
+	var builder strings.Builder
 
-	readme += "## Inputs\n\n"
-	readme += "| Input name | Required | Default Value |\n"
-	readme += "|------------|----------|---------------|\n"
+	// Title
+	builder.WriteString(fmt.Sprintf("# GitHub Action: %s\n\n", action.Name))
 
-	for inputName, input := range action.Inputs {
+	// Description
+	builder.WriteString(action.Description + "\n\n")
+
+	// Inputs section
+	builder.WriteString("## Inputs\n\n")
+	builder.WriteString("| Name | Description | Required | Default Value |\n")
+	builder.WriteString("|------|-------------|----------|---------------|\n")
+
+	for name, input := range action.Inputs {
+		defaultValue := "`Null`"
+		if input.Default != "" {
+			defaultValue = fmt.Sprintf("`%s`", input.Default)
+		}
 		required := "`false`"
 		if input.Required {
 			required = "`true`"
 		}
-
-		defaultValue := input.Default
-		if defaultValue == "" {
-			defaultValue = "`N/A`"
-		} else {
-			defaultValue = fmt.Sprintf("`%s`", defaultValue)
-		}
-
-		readme += fmt.Sprintf("| `%s` | %s | %s |\n", strings.Title(inputName), required, defaultValue)
+		builder.WriteString(fmt.Sprintf("| `%s` | %s | %s | %s |\n", name, input.Description, required, defaultValue))
 	}
 
-	readme += "\n## Author\n\n"
-	readme += action.Author
-
-	return readme
+	return builder.String()
 }
