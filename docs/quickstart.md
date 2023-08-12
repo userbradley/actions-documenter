@@ -10,10 +10,9 @@ jobs:
       contents: read
     name: Build and Deploy
     steps:
-      - uses: userbradley/action-mkdocs@${{version}}
+      - uses: userbradley/example-action@${{version}}
         with:
-          gcsBucket: 
-          serviceAccount: 
+          gcsBucket:
+          serviceAccount:
           directory: site
 ```
-

@@ -6,27 +6,17 @@ title {
 }
 
 quickstart {
-  path = "quickstart.md"
+  path = "docs/quickstart.md"
 }
 
 examples {
   example {
     enabled = true
     name    = "Example 1"
-    path    = "examples/example1.md"
-  }
-  example {
-    enabled = true
-    name    = "Example 2"
-    path    = "examples/example2.md"
-  }
-  example {
-    enabled = true
-    name    = "Example 3"
-    path    = "examples/example3.md"
+    path    = "docs/example1.md"
   }
 }
 
 footer {
-  footer_from = "footer.md"
+  footer_from = "docs/footer.md"
 }

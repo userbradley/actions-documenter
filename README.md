@@ -1,35 +1,61 @@
-# GitHub Actions Automatic Documenter
+# GitHub Action: Example Action
 
-## What problem this solves
+A simple example action to demonstrate the output from the CLI
 
-An itch at the back of my brain
+## Quickstart
 
-## How to use
+```yaml
+on: [push]
+name: Build
 
-You will need to install the CLI locally (Coming soon)
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    name: Build and Deploy
+    steps:
+      - uses: userbradley/example-action@v1.0.0
+        with:
+          gcsBucket:
+          serviceAccount:
+          directory: site
+```
+## Inputs
 
-For the time being this can be done by running:
+| Name | Description | Required | Default Value |
+|------|-------------|----------|---------------|
+| `mkdocsVersion` | Version of MKdocs to install | `false` | `9.1.21` |
+| `gcsBucket` | Name of the GCS Bucket to deploy the site to | `true` | `Null` |
+| `serviceAccount` | Email address of the service account to use to Upload to the GCS Bucket | `true` | `Null` |
+| `sensitive` | Should the Workload Identity provider use the Sensitive Pool | `false` | `false` |
+| `GITHUB_TOKEN` | GitHub Token | `true` | `Null` |
+| `siteUrl` | URL of the site to link the PR comment to | `true` | `Null` |
+| `directory` | Location of the site to build | `true` | `Null` |
 
-```shell
-git clone git@github.com:userbradley/actions-documenter.git
-go install
+## Examples
+
+### Example 1
+
+```yaml
+on: [push]
+name: Build
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    name: Build and Deploy
+    steps:
+      - uses: userbradley/example-action@v1.0.0
+        with:
+          gcsBucket: 
+          serviceAccount: 
+          directory: site
 ```
 
-Once installed run the below
-
-```shell
-touch readme.hcl
-mkdir examples
-touch examples/basic.md
-touch examples/quickstart.md
-```
-
-Ensure you run the command line tool from the same directory as the `actions.yml` file
-
-## Generate the README
-
-```shell
-actions-documenter 
-```
-
-This will create the README file
+---
+This code is internal and not for release

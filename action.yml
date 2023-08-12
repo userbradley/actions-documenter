@@ -1,5 +1,5 @@
-name: mkdocs Build
-description: Mkdocs site builder and deployer
+name: Example Action
+description: A simple example action to demonstrate the output from the CLI
 author: "userbradley"
 
 inputs:
