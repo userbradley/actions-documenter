@@ -34,3 +34,6 @@ In this file you should put the minimum viable product to get it working.
     You can replace the version (so `@v1.0.0`) with `${{version}}` so when the command line tool is run, it will 
     find and replace so you don't need to update it everywhere when releasing a new version
 
+## Create a single example
+
+Now create an example in the example folder on how to use the action in a specific way and update the configuration file
