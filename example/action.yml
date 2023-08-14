@@ -8,21 +8,20 @@ inputs:
     required: false
     default: "9.1.21"
   gcsBucket:
-    description: Name of the GCS Bucket to deploy the site to
+    description: Name of the GCS Bucket
     required: true
   serviceAccount:
-    description: Email address of the service account to use to Upload to the GCS Bucket
+    description: Email address of the service account
     required: true
-  sensitive:
-    description: Should the Workload Identity provider use the Sensitive Pool
-    default: false
-    required: false
   GITHUB_TOKEN:
     description: GitHub Token
     required: true
   siteUrl:
-    description: URL of the site to link the PR comment to
+    description: URL of the site to deploy to
     required: true
   directory:
     description: Location of the site to build
     required: true
+
+runs:
+  {}
