@@ -1,7 +1,7 @@
 nav:
   - Home: index.md
-  - Change log: changelog/index.md
   - Reference: reference/index.md
+  - Change log: changelog/index.md
 
 
 
