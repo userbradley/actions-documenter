@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/go-yaml/yaml v2.1.0+incompatible
-	github.com/hashicorp/hcl/v2 v2.18.0
+	github.com/hashicorp/hcl/v2 v2.19.1
 )
 
 require (
